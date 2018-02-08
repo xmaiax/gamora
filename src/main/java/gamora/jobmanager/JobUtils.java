@@ -1,7 +1,4 @@
-package br.fmaia.gamora.jobmanager;
-
-import org.springframework.scheduling.quartz.JobDetailBean;
-import org.springframework.scheduling.quartz.SimpleTriggerBean;
+package gamora.jobmanager;
 
 @org.springframework.stereotype.Component
 public final class JobUtils<J extends GenericJob> {
@@ -15,10 +12,10 @@ public final class JobUtils<J extends GenericJob> {
     return job == null ? null : job.getClass().getSimpleName().concat(sufixo == null ? "" : sufixo);
   }
 
-  private JobDetailBean criarJobDetailBean(J job) {
+  private org.springframework.scheduling.quartz.JobDetailBean criarJobDetailBean(J job) {
     try {
       this.logger.debug(String.format("Criando o JobDetailBean '%s'...", this.gerarNomeDoJob(job, null)));
-      JobDetailBean jobDetailBean = new JobDetailBean();
+      org.springframework.scheduling.quartz.JobDetailBean jobDetailBean = new org.springframework.scheduling.quartz.JobDetailBean();
       jobDetailBean.setJobClass(job.getClass());
       jobDetailBean.setName(this.gerarNomeDoJob(job, null));
       java.util.Map<String, Object> map = new java.util.HashMap<String, Object>();
@@ -35,37 +32,38 @@ public final class JobUtils<J extends GenericJob> {
     return null;
   }
 
-  private org.springframework.scheduling.quartz.SimpleTriggerBean criarTrigger(J job, JobDetailBean jobDetailBean) {
+  private org.springframework.scheduling.quartz.CronTriggerBean criarTrigger(J job, org.springframework.scheduling.quartz.JobDetailBean jobDetailBean) {
     try {
       this.logger.debug(String.format("Criando a Trigger '%s'...", this.gerarNomeDoJob(job, null)));
-      org.springframework.scheduling.quartz.SimpleTriggerBean simpleTrigger = new SimpleTriggerBean();
-      simpleTrigger.setJobDetail(jobDetailBean);
-      simpleTrigger.setJobName(this.gerarNomeDoJob(job, null));
-      simpleTrigger.setName(this.gerarNomeDoJob(job, "Trigger"));
-      simpleTrigger.setStartTime(java.util.Calendar.getInstance().getTime());
-      simpleTrigger.setRepeatInterval(job.intervaloDeExecucaoEmSegundos() * 1000);
-      simpleTrigger.setPriority(job.prioridade().getIntValue());
+      org.springframework.scheduling.quartz.CronTriggerBean trigger = new org.springframework.scheduling.quartz.CronTriggerBean();
+      trigger.setJobDetail(jobDetailBean);
+      trigger.setJobName(this.gerarNomeDoJob(job, null));
+      trigger.setName(this.gerarNomeDoJob(job, "Trigger"));
+      trigger.setPriority(job.prioridade().getIntValue());
+      trigger.setStartTime(java.util.Calendar.getInstance().getTime());
+      trigger.setCronExpression(job.expressaoCronFrequenciaExecucao());
       this.logger.debug(String.format("Trigger '%s' criada com sucesso!", this.gerarNomeDoJob(job, null)));
-      return simpleTrigger;
+      return trigger;
     }
     catch(Exception e) {
       e.printStackTrace();
       this.logger.fatal(String.format("Ocorreu um erro ao criar a Trigger do job '%s': %s", jobDetailBean.getName(), e.getMessage()));
       System.exit(-1);
     }
+
     return null;
   }
 
-  private void schedularJob(org.quartz.Scheduler scheduler, JobDetailBean jobDetailBean, org.quartz.Trigger trigger) throws org.quartz.SchedulerException {
+  private void schedularJob(org.quartz.Scheduler scheduler, org.springframework.scheduling.quartz.JobDetailBean jobDetailBean, org.quartz.Trigger trigger) throws org.quartz.SchedulerException {
     try {
-      this.logger.debug(String.format("Schedulando Job '%s'...", jobDetailBean.getName()));
+      this.logger.debug(String.format("Agendando Job '%s'...", jobDetailBean.getName()));
       scheduler.addJob(jobDetailBean, Boolean.TRUE);
       scheduler.scheduleJob(trigger);
       this.logger.debug(String.format("Job '%s' schedulado com sucesso!", jobDetailBean.getName()));
     }
     catch(Exception e) {
       e.printStackTrace();
-      this.logger.fatal(String.format("Ocorreu um erro ao schedular o job '%s': %s", jobDetailBean.getName(), e.getMessage()));
+      this.logger.fatal(String.format("Ocorreu um erro ao agendar o job '%s': %s", jobDetailBean.getName(), e.getMessage()));
       System.exit(-1);
     }
   }
@@ -80,7 +78,7 @@ public final class JobUtils<J extends GenericJob> {
           @SuppressWarnings("unchecked")
           J job = (J) bean;
           this.logger.debug(String.format("Job '%s' encontrado, configurando...", this.gerarNomeDoJob(job, null)));
-          JobDetailBean jdb = this.criarJobDetailBean(job);
+          org.springframework.scheduling.quartz.JobDetailBean jdb = this.criarJobDetailBean(job);
           this.schedularJob(scheduler, jdb, this.criarTrigger(job, jdb));
         }
         catch (org.quartz.SchedulerException e) {

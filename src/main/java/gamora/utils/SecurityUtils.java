@@ -1,4 +1,4 @@
-package br.fmaia.gamora.utils;
+package gamora.utils;
 
 public class SecurityUtils {
 

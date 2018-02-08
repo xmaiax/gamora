@@ -1,71 +1,52 @@
-package br.fmaia.gamora.orm.generic;
-
-import java.io.Serializable;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.Query;
-import javax.persistence.Table;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+package gamora.orm.generic;
 
 public abstract class GenericServiceImpl<
                         T extends GenericEntity<PK>,
-                        PK extends Serializable,
+                        PK extends java.io.Serializable,
                         REP extends GenericRepository<T, PK>
                                         >
     implements GenericService<T, PK, REP> {
 
-  protected Logger logger = Logger.getLogger(GenericServiceImpl.class);
+  protected org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(GenericServiceImpl.class);
 
+  @org.springframework.beans.factory.annotation.Autowired
   protected REP rep;
+
   protected Class<T> entityClass;
 
   @SuppressWarnings("unchecked")
   public GenericServiceImpl() {
-    ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
-    this.entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
-    logger.info(
+    java.lang.reflect.ParameterizedType genericSuperclass = (java.lang.reflect.ParameterizedType) getClass().getGenericSuperclass();
+    this.entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[java.math.BigInteger.ZERO.intValue()];
+    this.logger.info(
         String.format("Instanciando '%s' (Tabela: %s)",
           this.getClass().getSimpleName(),
-          this.entityClass.getAnnotation(Table.class).schema() == null || this.entityClass.getAnnotation(Table.class).schema().length() < 1 ?
-            this.entityClass.getAnnotation(Table.class).name() :
-            this.entityClass.getAnnotation(Table.class).schema().concat(".").concat(this.entityClass.getAnnotation(Table.class).name())
+          this.entityClass.getAnnotation(javax.persistence.Table.class).schema() == null || this.entityClass.getAnnotation(javax.persistence.Table.class).schema().length() < java.math.BigInteger.ONE.intValue() ?
+            this.entityClass.getAnnotation(javax.persistence.Table.class).name() :
+            this.entityClass.getAnnotation(javax.persistence.Table.class).schema().concat(".").concat(this.entityClass.getAnnotation(javax.persistence.Table.class).name())
         )
       );
   }
 
   @Override
-  @Transactional(readOnly = true)
-  public List<T> listarTodos() {
-    return this.rep.listarTodos();
-  }
+  @org.springframework.transaction.annotation.Transactional(readOnly = true)
+  public java.util.List<T> listarTodos() { return this.rep.listarTodos(); }
 
   @Override
   @SuppressWarnings("unchecked")
-  @Transactional(readOnly = true)
-  public List<T> listarTodosComPaginacao(int pagina, int registros) {
+  @org.springframework.transaction.annotation.Transactional(readOnly = true)
+  public java.util.List<T> listarTodosComPaginacao(int pagina, int registros) {
     String sql = String.format("FROM %s", this.entityClass.getName());
-    Query query = this.rep.entityManager.createQuery(sql);
+    javax.persistence.Query query = this.rep.entityManager.createQuery(sql);
     return this.rep.getResultadosComPaginacao(query, pagina, registros).getResultList();
   }
 
   @Override
-  @Transactional(readOnly = true)
-  public long contarTodos() {
-    return this.rep.contarTodos();
-  }
+  @org.springframework.transaction.annotation.Transactional(readOnly = true)
+  public long contarTodos() { return this.rep.contarTodos(); }
 
   @Override
-  @Transactional(readOnly = false)
+  @org.springframework.transaction.annotation.Transactional(readOnly = false)
   public T salvar(T t) {
     if (t.getPrimaryKey() == null) this.rep.inserir(t);
     else this.rep.atualizar(t);
@@ -73,14 +54,14 @@ public abstract class GenericServiceImpl<
   }
 
   @Override
-  @Transactional(readOnly = true)
+  @org.springframework.transaction.annotation.Transactional(readOnly = true)
   public T buscarPorId(PK id) {
     if (id != null) return this.rep.buscarPorId(id);
     return null;
   }
 
   @Override
-  @Transactional(readOnly = false)
+  @org.springframework.transaction.annotation.Transactional(readOnly = false)
   public T remover(T t) {
     if (t.getPrimaryKey() != null) {
       t = buscarPorId(t.getPrimaryKey());
@@ -91,18 +72,18 @@ public abstract class GenericServiceImpl<
   }
 
   private StringBuilder incluirAND(StringBuilder sbWhere) {
-    if(sbWhere.toString().length() > 1) sbWhere.append(" AND");
+    if(sbWhere.toString().length() > java.math.BigInteger.ONE.intValue()) sbWhere.append(" AND");
     return sbWhere;
   }
 
-  private Object recuperarValorPorAtributo(T t, Field atributo) {
+  private Object recuperarValorPorAtributo(T t, java.lang.reflect.Field atributo) {
     try {
       StringBuilder sb = new StringBuilder();
       sb.append("get");
       char[] array = atributo.getName().toCharArray();
-      array[0] = Character.toUpperCase(array[0]);
+      array[java.math.BigInteger.ZERO.intValue()] = Character.toUpperCase(array[java.math.BigInteger.ZERO.intValue()]);
       sb.append(new String(array));
-      Method m = t.getClass().getMethod(sb.toString());
+      java.lang.reflect.Method m = t.getClass().getMethod(sb.toString());
       return m.invoke(t);
     }
     catch(Exception e) { return null; }
@@ -110,37 +91,37 @@ public abstract class GenericServiceImpl<
 
   @Override
   @SuppressWarnings("unchecked")
-  @Transactional(readOnly = true)
-  public List<T> listarPorExemplo(T t) {
+  @org.springframework.transaction.annotation.Transactional(readOnly = true)
+  public java.util.List<T> listarPorExemplo(T t) {
     if(t == null) return this.listarTodos();
     return this.montarQueryPorExemplo(t).getResultList();
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  @Transactional(readOnly = true)
-  public List<T> listarPorExemploComPaginacao(T t, int pagina, int registros) {
+  @org.springframework.transaction.annotation.Transactional(readOnly = true)
+  public java.util.List<T> listarPorExemploComPaginacao(T t, int pagina, int registros) {
     if(t == null) return this.listarTodosComPaginacao(pagina, registros);
     return this.rep.getResultadosComPaginacao(this.montarQueryPorExemplo(t), pagina, registros).getResultList();
   }
 
-  private Query montarQueryPorExemplo(T t) {
-    Field[] atributos = t.getClass().getDeclaredFields();
-    Map<String, Object> parametros = new HashMap<String, Object>();
-    List<String> listaParametros = new ArrayList<String>();
+  private javax.persistence.Query montarQueryPorExemplo(T t) {
+    java.lang.reflect.Field[] atributos = t.getClass().getDeclaredFields();
+    java.util.Map<String, Object> parametros = new java.util.HashMap<String, Object>();
+    java.util.List<String> listaParametros = new java.util.ArrayList<String>();
     StringBuilder sbWhere = new StringBuilder();
     final String prefixoQuery = ("FROM ").concat(this.entityClass.getName());
-    final String packageEntidades = this.entityClass.toString().substring(0, this.entityClass.toString().lastIndexOf("."));
-    for(Field atributo : atributos) {
-      Boolean ehAtributoJPA = Boolean.FALSE;
-      Annotation[] anotacoes = atributo.getAnnotations();
-      for(Annotation anotacao : anotacoes) {
+    final String packageEntidades = this.entityClass.toString().substring(java.math.BigInteger.ZERO.intValue(), this.entityClass.toString().lastIndexOf("."));
+    for(java.lang.reflect.Field atributo : atributos) {
+      Boolean isAtributoJPA = Boolean.FALSE;
+      java.lang.annotation.Annotation[] anotacoes = atributo.getAnnotations();
+      for(java.lang.annotation.Annotation anotacao : anotacoes) {
         if(anotacao.toString().startsWith("@javax.persistence")) {
-          ehAtributoJPA = Boolean.TRUE;
+          isAtributoJPA = Boolean.TRUE;
           break;
         }
       }
-      if(ehAtributoJPA) {
+      if(isAtributoJPA) {
         // STRING - Inclui um LIKE e dá um LOWER CASE
         if(String.class.equals(atributo.getType())) {
           try {
@@ -179,8 +160,8 @@ public abstract class GenericServiceImpl<
 
       }
     }
-    Query query = this.rep.entityManager.createQuery(
-        sbWhere.toString().length() < 1 ?
+    javax.persistence.Query query = this.rep.entityManager.createQuery(
+        sbWhere.toString().length() < java.math.BigInteger.ONE.intValue() ?
             prefixoQuery :
             prefixoQuery.concat(" WHERE ").concat(sbWhere.toString())
     );
@@ -189,7 +170,5 @@ public abstract class GenericServiceImpl<
     }
     return query;
   }
-
-  @Override @Autowired public void setREP(REP rep) { this.rep = rep; }
 
 }

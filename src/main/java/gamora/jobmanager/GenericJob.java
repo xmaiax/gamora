@@ -1,4 +1,4 @@
-package br.fmaia.gamora.jobmanager;
+package gamora.jobmanager;
 
 public abstract class GenericJob extends org.springframework.scheduling.quartz.QuartzJobBean {
 
@@ -15,15 +15,14 @@ public abstract class GenericJob extends org.springframework.scheduling.quartz.Q
     super();
     this.logger = org.apache.log4j.Logger.getLogger(this.getClass());
     this.inicioExecucao = java.util.Calendar.getInstance();
-    this.idExecucao = br.fmaia.gamora.utils.SecurityUtils.getInstance().string2MD5(
+    this.idExecucao = gamora.utils.SecurityUtils.getInstance().string2MD5(
       String.valueOf(this.inicioExecucao.getTimeInMillis())
     );
   }
 
   protected abstract void executar() throws org.quartz.JobExecutionException;
-
-  protected abstract int intervaloDeExecucaoEmSegundos();
-  public Prioridade prioridade() { return Prioridade.NORMAL; }
+  protected abstract String expressaoCronFrequenciaExecucao();
+  public gamora.jobmanager.Prioridade prioridade() { return gamora.jobmanager.Prioridade.NORMAL; }
 
   protected void executeInternal(org.quartz.JobExecutionContext context) throws org.quartz.JobExecutionException {
 

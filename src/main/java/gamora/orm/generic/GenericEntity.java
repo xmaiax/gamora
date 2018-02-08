@@ -1,15 +1,6 @@
-package br.fmaia.gamora.orm.generic;
+package gamora.orm.generic;
 
-import java.io.Serializable;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
-import br.fmaia.gamora.utils.GSonUtils;
-
-public abstract class GenericEntity<PK extends Serializable> {
+public abstract class GenericEntity<PK extends java.io.Serializable> {
 
   private static final String    GET                       = "get";
   private static final Character QUEBRA_ATRIBUTO           = Character.MAX_VALUE;
@@ -19,9 +10,9 @@ public abstract class GenericEntity<PK extends Serializable> {
 
   @SuppressWarnings("unchecked")
   public PK getPrimaryKey() {
-    for (Field field : this.getClass().getDeclaredFields()) {
-      Annotation[] annotations = field.getDeclaredAnnotations();
-      for (Annotation annotation : annotations)
+    for (java.lang.reflect.Field field : this.getClass().getDeclaredFields()) {
+      java.lang.annotation.Annotation[] annotations = field.getDeclaredAnnotations();
+      for (java.lang.annotation.Annotation annotation : annotations)
         if (annotation.annotationType().equals(javax.persistence.Id.class) ||
             annotation.annotationType().equals(javax.persistence.EmbeddedId.class))
           try {
@@ -39,8 +30,8 @@ public abstract class GenericEntity<PK extends Serializable> {
     StringBuilder sb = new StringBuilder();
     sb.append(this.getClass().getSimpleName());
     sb.append(" ".concat(MARCADOR_INICIO_ATRIBUTOS.toString()));
-    Field[] atributos = this.getClass().getDeclaredFields();
-    for (int i = 0; i < atributos.length; i++) {
+    java.lang.reflect.Field[] atributos = this.getClass().getDeclaredFields();
+    for (int i = java.math.BigInteger.ZERO.intValue(); i < atributos.length; i++) {
       sb.append(atributos[i].getName());
       sb.append("=".concat(QUEBRA_ATRIBUTO.toString()));
       if (i != atributos.length - 1) {
@@ -54,17 +45,17 @@ public abstract class GenericEntity<PK extends Serializable> {
     StringBuilder sb = new StringBuilder();
     sb.append(GET);
     char[] array = nomeAtributo.toCharArray();
-    array[0] = Character.toUpperCase(array[0]);
+    array[java.math.BigInteger.ZERO.intValue()] = Character.toUpperCase(array[java.math.BigInteger.ZERO.intValue()]);
     sb.append(new String(array));
     return sb.toString();
   }
 
   @Override
   public String toString() {
-    List<Object> getters = new ArrayList<Object>();
-    for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
+    java.util.List<Object> getters = new java.util.ArrayList<Object>();
+    for (int i = java.math.BigInteger.ZERO.intValue(); i < this.getClass().getDeclaredFields().length; i++) {
       try {
-        Method m = this.getClass().getMethod(getGetter(this.getClass().getDeclaredFields()[i].getName()));
+        java.lang.reflect.Method m = this.getClass().getMethod(getGetter(this.getClass().getDeclaredFields()[i].getName()));
         getters.add(m.invoke(this));
       }
       catch (Exception ignore) {
@@ -72,18 +63,18 @@ public abstract class GenericEntity<PK extends Serializable> {
       }
     }
     String[] pattern = TO_STRING_FIELDS.split(String.format("[%s]", QUEBRA_ATRIBUTO.toString()));
-    int i = 0;
+    int i = java.math.BigInteger.ZERO.intValue();
     StringBuilder sb = new StringBuilder();
     while (!getters.isEmpty()) {
       sb.append(pattern[i++]);
-      sb.append(getters.remove(0));
+      sb.append(getters.remove(java.math.BigInteger.ZERO.intValue()));
     }
     sb.append(MARCADOR_FIM_ATRIBUTOS);
     return sb.toString();
   }
 
   public String toJson() {
-    return GSonUtils.getInstance().obj2Json(this);
+    return gamora.utils.GSonUtils.getInstance().obj2Json(this);
   }
 
 }

@@ -1,4 +1,4 @@
-package br.fmaia.gamora.orm.generic;
+package gamora.orm.generic;
 
 public enum HBM2DDL {
   VALIDAR("validate"), 

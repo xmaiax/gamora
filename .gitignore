@@ -3,7 +3,6 @@
 .project
 .settings/
 banco/
-COMPILADO/
 logs/
 maven-eclipse.xml
 target/

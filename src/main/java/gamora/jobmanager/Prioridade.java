@@ -1,4 +1,4 @@
-package br.fmaia.gamora.jobmanager;
+package gamora.jobmanager;
 
 public enum Prioridade {
 

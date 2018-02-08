@@ -1,4 +1,4 @@
-package br.fmaia.gamora.orm.generic;
+package gamora.orm.generic;
 
 public interface GenericService<
                    T extends GenericEntity<PK>,
@@ -17,7 +17,5 @@ public interface GenericService<
 
   public T salvar(T t);
   public T remover(T t);
-
-  public void setREP(REP rep);
 
 }
