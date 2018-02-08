@@ -2,7 +2,6 @@
 .externalToolBuilders/
 .project
 .settings/
-banco/
-logs/
+arquivos/
 maven-eclipse.xml
 target/
