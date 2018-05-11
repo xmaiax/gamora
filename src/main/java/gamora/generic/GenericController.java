@@ -1,4 +1,4 @@
-package gamora.orm.generic;
+package gamora.generic;
 
 @SuppressWarnings("rawtypes")
 public abstract class GenericController<T extends GenericEntity<PK>, PK extends java.io.Serializable, SRVC extends GenericService> {
@@ -11,8 +11,8 @@ public abstract class GenericController<T extends GenericEntity<PK>, PK extends 
   @SuppressWarnings("unchecked")
   public GenericController() {
     java.lang.reflect.ParameterizedType genericSuperclass = (java.lang.reflect.ParameterizedType) this.getClass().getGenericSuperclass();
-    this.entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[java.math.BigInteger.ZERO.intValue()];
-    this.pkClass = (Class<PK>) genericSuperclass.getActualTypeArguments()[java.math.BigInteger.ONE.intValue()];
+    this.entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
+    this.pkClass = (Class<PK>) genericSuperclass.getActualTypeArguments()[1];
     this.logger.debug(String.format("Instanciando '%s'",this.getClass().getSimpleName()));
   }
 

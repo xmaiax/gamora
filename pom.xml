@@ -11,12 +11,11 @@
 	<version>mk-ii</version>
 
 	<properties>
-		<jdk.version>1.6</jdk.version>
+		<jdk.version>1.8</jdk.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<springframework.core.version>4.3.11.RELEASE</springframework.core.version>
 		<springframework.version>3.2.14.RELEASE</springframework.version>
 		<javax.servlet-api.version>3.0.1</javax.servlet-api.version>
-		<jstl.version>1.2</jstl.version>
 		<hibernate-entitymanager.version>4.3.11.Final</hibernate-entitymanager.version>
 		<spring-data-jpa.version>1.9.0.RELEASE</spring-data-jpa.version>
 		<h2.version>1.4.191</h2.version>
@@ -26,19 +25,13 @@
 	</properties>
 
 	<build>
-
 		<sourceDirectory>src/main/java</sourceDirectory>
-
 		<resources>
-
 			<resource>
 				<directory>src/main/resources</directory>
 			</resource>
-
 		</resources>
-
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -47,24 +40,7 @@
 					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<outputDirectory>${release.dir}</outputDirectory>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>${dependency.dir}/</classpathPrefix>
-							<mainClass>${main.class}</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-
 		</plugins>
-
 	</build>
 
 	<dependencies>
@@ -145,12 +121,6 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>${javax.servlet-api.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>${jstl.version}</version>
 		</dependency>
 
 		<!-- Spring MVC - F -->

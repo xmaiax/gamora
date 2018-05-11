@@ -1,4 +1,4 @@
-package gamora.orm.json;
+package gamora.json;
 
 public class EstrategiaIgnorarCampoPorAnnotation implements com.google.gson.ExclusionStrategy {
   @Override public boolean shouldSkipClass(Class<?> nada) { return false; }

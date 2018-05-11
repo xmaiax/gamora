@@ -1,15 +1,10 @@
-package gamora.orm.generic;
+package gamora.generic;
 
 public abstract class GenericSpringConfig {
 
+  private static final String CONST_NOME_PADRAO_PU = "gamoraPersistenceUnit";
+  
   public abstract Configuracoes configuracoes();
-
-  private String gerarNomeComSufixo(String sufixo) {
-    final String nomeClasse = this.getClass().getSimpleName();
-    StringBuilder sb = new StringBuilder(nomeClasse.substring(java.math.BigInteger.ZERO.intValue(), nomeClasse.indexOf("SpringConfig")).toLowerCase());
-    sb.append(sufixo);
-    return sb.toString();
-  }
 
   @org.springframework.context.annotation.Bean
   public javax.sql.DataSource dataSource() {
@@ -25,10 +20,10 @@ public abstract class GenericSpringConfig {
   public javax.persistence.EntityManagerFactory entityManagerFactory() {
     org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean factory = new org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean();
     factory.setDataSource(this.dataSource());
-    factory.setPackagesToScan(this.getClass().getAnnotation(org.springframework.data.jpa.repository.config.EnableJpaRepositories.class).value()[java.math.BigInteger.ZERO.intValue()]);
+    factory.setPackagesToScan(this.getClass().getAnnotation(org.springframework.data.jpa.repository.config.EnableJpaRepositories.class).value()[0]);
     factory.setJpaVendorAdapter(new org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter());
     factory.setJpaProperties(this.configuracoes().getHibernateProperties());
-    factory.setPersistenceUnitName(this.gerarNomeComSufixo("PersistenceUnit"));
+    factory.setPersistenceUnitName(CONST_NOME_PADRAO_PU);
     factory.setPersistenceProviderClass(org.hibernate.jpa.HibernatePersistenceProvider.class);
     factory.afterPropertiesSet();
     return factory.getObject();

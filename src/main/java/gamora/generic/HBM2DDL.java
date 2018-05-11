@@ -1,6 +1,7 @@
-package gamora.orm.generic;
+package gamora.generic;
 
 public enum HBM2DDL {
+  NADA("none"),
   VALIDAR("validate"), 
   ATUALIZAR("update"), 
   DROPAR_CRIAR("create"), 

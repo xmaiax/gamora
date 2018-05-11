@@ -1,4 +1,4 @@
-package gamora.orm.generic;
+package gamora.generic;
 
 public interface GenericService<
                    T extends GenericEntity<PK>,

@@ -15,7 +15,7 @@ public class GSonUtils {
                   .setDateFormat(CONST_DATA_PATTERN)
                   .setPrettyPrinting()
                   .serializeNulls()
-                  .setExclusionStrategies(new gamora.orm.json.EstrategiaIgnorarCampoPorAnnotation())
+                  .setExclusionStrategies(new gamora.json.EstrategiaIgnorarCampoPorAnnotation())
                .create();
   }
 

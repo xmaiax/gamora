@@ -1,4 +1,4 @@
-package gamora.orm.generic;
+package gamora.generic;
 
 public abstract class GenericRepository<T extends GenericEntity<PK>, PK extends java.io.Serializable> {
 
@@ -12,11 +12,11 @@ public abstract class GenericRepository<T extends GenericEntity<PK>, PK extends 
   @SuppressWarnings("unchecked")
   public GenericRepository() {
     java.lang.reflect.ParameterizedType genericSuperclass = (java.lang.reflect.ParameterizedType) this.getClass().getGenericSuperclass();
-    this.entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[java.math.BigInteger.ZERO.intValue()];
+    this.entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
     this.logger.info(
       String.format("Instanciando '%s' (Tabela: %s)",
         this.getClass().getSimpleName(),
-        this.entityClass.getAnnotation(javax.persistence.Table.class).schema() == null || this.entityClass.getAnnotation(javax.persistence.Table.class).schema().length() < java.math.BigInteger.ONE.intValue() ?
+        this.entityClass.getAnnotation(javax.persistence.Table.class).schema() == null || this.entityClass.getAnnotation(javax.persistence.Table.class).schema().length() < 1 ?
           this.entityClass.getAnnotation(javax.persistence.Table.class).name() :
           this.entityClass.getAnnotation(javax.persistence.Table.class).schema().concat(".").concat(this.entityClass.getAnnotation(javax.persistence.Table.class).name())
       )
@@ -37,7 +37,7 @@ public abstract class GenericRepository<T extends GenericEntity<PK>, PK extends 
   }
 
   public javax.persistence.Query getResultadosComPaginacao(javax.persistence.Query query, int pagina, int registrosPorPagina) {
-    return query.setFirstResult((pagina - java.math.BigInteger.ONE.intValue()) * registrosPorPagina).setMaxResults(registrosPorPagina);
+    return query.setFirstResult((pagina - 1) * registrosPorPagina).setMaxResults(registrosPorPagina);
   }
 
   public PK inserir(T t) {
@@ -46,7 +46,7 @@ public abstract class GenericRepository<T extends GenericEntity<PK>, PK extends 
   }
 
   public T buscarPorId(PK id) {
-    return this.entityManager.find(entityClass, id);
+    return this.entityManager.find(this.entityClass, id);
   }
 
   public void atualizar(T t) {

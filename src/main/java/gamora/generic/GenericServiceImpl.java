@@ -1,4 +1,4 @@
-package gamora.orm.generic;
+package gamora.generic;
 
 public abstract class GenericServiceImpl<
                         T extends GenericEntity<PK>,
@@ -17,11 +17,11 @@ public abstract class GenericServiceImpl<
   @SuppressWarnings("unchecked")
   public GenericServiceImpl() {
     java.lang.reflect.ParameterizedType genericSuperclass = (java.lang.reflect.ParameterizedType) getClass().getGenericSuperclass();
-    this.entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[java.math.BigInteger.ZERO.intValue()];
+    this.entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
     this.logger.info(
         String.format("Instanciando '%s' (Tabela: %s)",
           this.getClass().getSimpleName(),
-          this.entityClass.getAnnotation(javax.persistence.Table.class).schema() == null || this.entityClass.getAnnotation(javax.persistence.Table.class).schema().length() < java.math.BigInteger.ONE.intValue() ?
+          this.entityClass.getAnnotation(javax.persistence.Table.class).schema() == null || this.entityClass.getAnnotation(javax.persistence.Table.class).schema().length() < 1 ?
             this.entityClass.getAnnotation(javax.persistence.Table.class).name() :
             this.entityClass.getAnnotation(javax.persistence.Table.class).schema().concat(".").concat(this.entityClass.getAnnotation(javax.persistence.Table.class).name())
         )
@@ -72,7 +72,7 @@ public abstract class GenericServiceImpl<
   }
 
   private StringBuilder incluirAND(StringBuilder sbWhere) {
-    if(sbWhere.toString().length() > java.math.BigInteger.ONE.intValue()) sbWhere.append(" AND");
+    if(sbWhere.toString().length() > 1) sbWhere.append(" AND");
     return sbWhere;
   }
 
@@ -81,7 +81,7 @@ public abstract class GenericServiceImpl<
       StringBuilder sb = new StringBuilder();
       sb.append("get");
       char[] array = atributo.getName().toCharArray();
-      array[java.math.BigInteger.ZERO.intValue()] = Character.toUpperCase(array[java.math.BigInteger.ZERO.intValue()]);
+      array[0] = Character.toUpperCase(array[0]);
       sb.append(new String(array));
       java.lang.reflect.Method m = t.getClass().getMethod(sb.toString());
       return m.invoke(t);
@@ -111,7 +111,7 @@ public abstract class GenericServiceImpl<
     java.util.List<String> listaParametros = new java.util.ArrayList<String>();
     StringBuilder sbWhere = new StringBuilder();
     final String prefixoQuery = ("FROM ").concat(this.entityClass.getName());
-    final String packageEntidades = this.entityClass.toString().substring(java.math.BigInteger.ZERO.intValue(), this.entityClass.toString().lastIndexOf("."));
+    final String packageEntidades = this.entityClass.toString().substring(0, this.entityClass.toString().lastIndexOf("."));
     for(java.lang.reflect.Field atributo : atributos) {
       Boolean isAtributoJPA = Boolean.FALSE;
       java.lang.annotation.Annotation[] anotacoes = atributo.getAnnotations();
@@ -161,7 +161,7 @@ public abstract class GenericServiceImpl<
       }
     }
     javax.persistence.Query query = this.rep.entityManager.createQuery(
-        sbWhere.toString().length() < java.math.BigInteger.ONE.intValue() ?
+        sbWhere.toString().length() < 1 ?
             prefixoQuery :
             prefixoQuery.concat(" WHERE ").concat(sbWhere.toString())
     );
