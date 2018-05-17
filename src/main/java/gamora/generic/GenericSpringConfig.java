@@ -1,9 +1,7 @@
 package gamora.generic;
 
-public abstract class GenericSpringConfig {
+public abstract class GenericSpringConfig extends org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter implements org.springframework.web.WebApplicationInitializer {
 
-  private static final String CONST_NOME_PADRAO_PU = "gamoraPersistenceUnit";
-  
   public abstract Configuracoes configuracoes();
 
   @org.springframework.context.annotation.Bean
@@ -23,7 +21,6 @@ public abstract class GenericSpringConfig {
     factory.setPackagesToScan(this.getClass().getAnnotation(org.springframework.data.jpa.repository.config.EnableJpaRepositories.class).value()[0]);
     factory.setJpaVendorAdapter(new org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter());
     factory.setJpaProperties(this.configuracoes().getHibernateProperties());
-    factory.setPersistenceUnitName(CONST_NOME_PADRAO_PU);
     factory.setPersistenceProviderClass(org.hibernate.jpa.HibernatePersistenceProvider.class);
     factory.afterPropertiesSet();
     return factory.getObject();
@@ -34,6 +31,47 @@ public abstract class GenericSpringConfig {
     org.springframework.orm.jpa.JpaTransactionManager transactionManager = new org.springframework.orm.jpa.JpaTransactionManager();
     transactionManager.setEntityManagerFactory(this.entityManagerFactory());
     return transactionManager;
+  }
+  
+  @Override
+  public void addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
+    super.addResourceHandlers(registry);
+    registry.addResourceHandler("/resources/**")
+            .addResourceLocations("/resources/");
+  }
+
+  @Override
+  public void configureContentNegotiation(org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer configurer) {
+    configurer.favorPathExtension(true).useJaf(false).ignoreAcceptHeader(true).mediaType("json", org.springframework.http.MediaType.ALL);
+  }
+
+  @org.springframework.context.annotation.Bean
+  public org.springframework.web.servlet.ViewResolver restfulViewResolver() {
+    return new org.springframework.web.servlet.view.BeanNameViewResolver();
+  }
+  
+  @org.springframework.context.annotation.Bean
+  public org.springframework.web.servlet.ViewResolver tiles3ViewResolver() {
+    return new org.springframework.web.servlet.view.tiles3.TilesViewResolver();
+  }
+  
+  @org.springframework.context.annotation.Bean
+  public org.springframework.web.servlet.view.tiles3.TilesConfigurer tilesConfigurer(){
+    org.springframework.web.servlet.view.tiles3.TilesConfigurer tilesConfigurer = new org.springframework.web.servlet.view.tiles3.TilesConfigurer();
+    tilesConfigurer.setDefinitions(new String[] { "/WEB-INF/**/tiles.xml" });
+    tilesConfigurer.setCheckRefresh(true);
+    return tilesConfigurer;
+  }
+  
+  @Override
+  public void onStartup(javax.servlet.ServletContext servletContext) throws javax.servlet.ServletException {
+    org.springframework.web.context.WebApplicationContext servletAppContext = new org.springframework.web.context.support.AnnotationConfigWebApplicationContext();
+    ((org.springframework.web.context.support.AnnotationConfigWebApplicationContext) servletAppContext).register(this.getClass());
+    org.springframework.web.servlet.DispatcherServlet dispatcherServlet = new org.springframework.web.servlet.DispatcherServlet(servletAppContext);
+    javax.servlet.ServletRegistration.Dynamic registration = servletContext.addServlet("dispatcher", dispatcherServlet);
+    registration.setLoadOnStartup(1);
+    registration.addMapping("/");
+    registration.setAsyncSupported(Boolean.TRUE);
   }
 
 }

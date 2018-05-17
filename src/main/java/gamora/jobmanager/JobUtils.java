@@ -81,12 +81,17 @@ public final class JobUtils<J extends GenericJob> {
           org.springframework.scheduling.quartz.JobDetailBean jdb = this.criarJobDetailBean(job);
           this.schedularJob(scheduler, jdb, this.criarTrigger(job, jdb));
         }
-        catch (org.quartz.SchedulerException e) {
+        catch(org.quartz.SchedulerException e) {
           this.logger.fatal(e.getMessage());
           System.exit(-1);
         }
       }
     }
+    /*try { scheduler.start(); } 
+    catch (SchedulerException e) {
+      this.logger.error(e.getMessage());
+      System.exit(-1);
+    }*/
     this.logger.debug("Todos os Job's foram configurados com sucesso. Iniciando aplica\u00e7\u00e3o...");
   }
 
