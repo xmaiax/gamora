@@ -14,7 +14,6 @@ public class GSonUtils {
                   .disableHtmlEscaping()
                   .setDateFormat(CONST_DATA_PATTERN)
                   .setPrettyPrinting()
-                  .serializeNulls()
                   .setExclusionStrategies(new gamora.json.EstrategiaIgnorarCampoPorAnnotation())
                .create();
   }

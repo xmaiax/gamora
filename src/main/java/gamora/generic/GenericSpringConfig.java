@@ -58,7 +58,7 @@ public abstract class GenericSpringConfig extends org.springframework.web.servle
   @org.springframework.context.annotation.Bean
   public org.springframework.web.servlet.view.tiles3.TilesConfigurer tilesConfigurer(){
     org.springframework.web.servlet.view.tiles3.TilesConfigurer tilesConfigurer = new org.springframework.web.servlet.view.tiles3.TilesConfigurer();
-    tilesConfigurer.setDefinitions(new String[] { "/WEB-INF/**/tiles.xml" });
+    tilesConfigurer.setDefinitions(new String[] { "/WEB-INF/**/tiles.xml", "classpath:**/tiles.xml" });
     tilesConfigurer.setCheckRefresh(true);
     return tilesConfigurer;
   }

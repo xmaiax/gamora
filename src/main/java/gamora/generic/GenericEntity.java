@@ -2,25 +2,48 @@ package gamora.generic;
 
 public abstract class GenericEntity<PK extends java.io.Serializable> {
 
-  private static final String    GET                       = "get";
   private static final Character QUEBRA_ATRIBUTO           = Character.MAX_VALUE;
-  private static final Character SEPARADOR                 = ',';
-  private static final Character MARCADOR_INICIO_ATRIBUTOS = '[';
-  private static final Character MARCADOR_FIM_ATRIBUTOS    = ']';
 
-  private transient String TO_STRING_FIELDS;
+  private static transient gamora.json.PropriedadeAutoForm autoForm;
+  private static transient String TO_STRING_FIELDS;
+  
   public GenericEntity() {
     super();
-    StringBuilder sb = new StringBuilder();
-    sb.append(this.getClass().getSimpleName());
-    sb.append(" ".concat(MARCADOR_INICIO_ATRIBUTOS.toString()));
-    java.lang.reflect.Field[] atributos = this.getClass().getDeclaredFields();
-    for(int i = 0; i < atributos.length; i++) {
-      sb.append(atributos[i].getName());
-      sb.append("=".concat(QUEBRA_ATRIBUTO.toString()));
-      if(i != atributos.length - 1) sb.append(SEPARADOR.toString().concat(" "));
+    
+    if(TO_STRING_FIELDS == null || TO_STRING_FIELDS.length() < 1) {
+      StringBuilder sb = new StringBuilder();
+      sb.append(this.getClass().getSimpleName());
+      sb.append(" [");
+      java.lang.reflect.Field[] atributos = this.getClass().getDeclaredFields();
+      for(int i = 0; i < atributos.length; i++) {
+        sb.append(atributos[i].getName());
+        sb.append("=".concat(QUEBRA_ATRIBUTO.toString()));
+        if(i != atributos.length - 1) sb.append(", ");
+      }
+      TO_STRING_FIELDS = sb.toString();
     }
-    this.TO_STRING_FIELDS = sb.toString();
+    
+    if(autoForm == null) {
+      autoForm = new gamora.json.PropriedadeAutoForm();
+      autoForm.setType("object");
+      autoForm.setTitle(this.getClass().getSimpleName());
+      autoForm.setProperties(new java.util.HashMap<String, gamora.json.PropriedadeAutoForm>());
+      for(java.lang.reflect.Field campo : this.getClass().getDeclaredFields()) {
+        if(campo.isAnnotationPresent(javax.persistence.Column.class)) {
+          gamora.json.PropriedadeAutoForm propriedade = new gamora.json.PropriedadeAutoForm(); 
+          propriedade.setName(campo.getName());
+          propriedade.setTitle(campo.getName().substring(0, 1).toUpperCase().concat(campo.getName().substring(1, campo.getName().length())));
+          propriedade.setType(
+            String.class.equals(campo.getType())  ? "string" : 
+            Integer.class.equals(campo.getType()) ? "integer" :
+            Long.class.equals(campo.getType())    ? "number" :
+            Boolean.class.equals(campo.getType()) ? "boolean" :
+            "object"
+          );
+          autoForm.getProperties().put(campo.getName(), propriedade);
+        }
+      }
+    }
   }
   
   @SuppressWarnings("unchecked")
@@ -38,7 +61,7 @@ public abstract class GenericEntity<PK extends java.io.Serializable> {
 
   private String getGetter(String nomeAtributo) {
     StringBuilder sb = new StringBuilder();
-    sb.append(GET);
+    sb.append("get");
     char[] array = nomeAtributo.toCharArray();
     array[0] = Character.toUpperCase(array[0]);
     sb.append(new String(array));
@@ -52,14 +75,14 @@ public abstract class GenericEntity<PK extends java.io.Serializable> {
       try { getters.add(this.getClass().getMethod(getGetter(this.getClass().getDeclaredFields()[i].getName())).invoke(this)); }
       catch (Exception ignore) { getters.add(null); }
     }
-    String[] pattern = this.TO_STRING_FIELDS.split(String.format("[%s]", QUEBRA_ATRIBUTO.toString()));
+    String[] pattern = TO_STRING_FIELDS.split(String.format("[%s]", QUEBRA_ATRIBUTO.toString()));
     int i = 0;
     StringBuilder sb = new StringBuilder();
     while (!getters.isEmpty()) sb.append(pattern[i++]).append(getters.remove(0));
-    sb.append(MARCADOR_FIM_ATRIBUTOS);
+    sb.append("]");
     return sb.toString();
   }
-
+  public String getAutoForm() { return gamora.utils.GSonUtils.getInstance().obj2Json(autoForm); };
   public String toJson() { return gamora.utils.GSonUtils.getInstance().obj2Json(this); }
 
 }
