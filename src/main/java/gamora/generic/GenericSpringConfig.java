@@ -1,6 +1,7 @@
 package gamora.generic;
 
-public abstract class GenericSpringConfig extends org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter implements org.springframework.web.WebApplicationInitializer {
+public abstract class GenericSpringConfig extends org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter 
+implements org.springframework.web.WebApplicationInitializer {
 
   public abstract Configuracoes configuracoes();
 
@@ -73,5 +74,5 @@ public abstract class GenericSpringConfig extends org.springframework.web.servle
     registration.addMapping("/");
     registration.setAsyncSupported(Boolean.TRUE);
   }
-
+  
 }

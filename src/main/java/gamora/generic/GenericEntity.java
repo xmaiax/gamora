@@ -9,7 +9,6 @@ public abstract class GenericEntity<PK extends java.io.Serializable> {
   
   public GenericEntity() {
     super();
-    
     if(TO_STRING_FIELDS == null || TO_STRING_FIELDS.length() < 1) {
       StringBuilder sb = new StringBuilder();
       sb.append(this.getClass().getSimpleName());
@@ -22,7 +21,6 @@ public abstract class GenericEntity<PK extends java.io.Serializable> {
       }
       TO_STRING_FIELDS = sb.toString();
     }
-    
     if(autoForm == null) {
       autoForm = new gamora.json.PropriedadeAutoForm();
       autoForm.setType("object");

@@ -157,7 +157,7 @@
 
 		<!-- Spring MVC + Servlet + Tiles 3 - F -->
 
-		<!-- JPA - I -->
+		<!-- JPA + H2 - I -->
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -177,7 +177,7 @@
 		    <version>${h2.version}</version>
 		</dependency>
 
-		<!-- JPA - F -->
+		<!-- JPA + H2 - F -->
 
 		<!-- GSon - I -->
 

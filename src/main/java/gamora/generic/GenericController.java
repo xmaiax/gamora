@@ -34,9 +34,14 @@ public abstract class GenericController<T extends GenericEntity<PK>, PK extends 
   public @org.springframework.web.bind.annotation.ResponseBody String listarPaginacao(@org.springframework.web.bind.annotation.PathVariable("pagina") Integer pagina, @org.springframework.web.bind.annotation.PathVariable("registros") Integer registros) {
     return gamora.utils.GSonUtils.getInstance().obj2Json(this.service.listarTodosComPaginacao(pagina, registros));
   }
+
+  @org.springframework.web.bind.annotation.RequestMapping(value = "/contar/todos", method = org.springframework.web.bind.annotation.RequestMethod.GET, produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+  public @org.springframework.web.bind.annotation.ResponseBody String contarTodos() {
+    return gamora.utils.GSonUtils.getInstance().obj2Json(this.service.contarTodos());
+  }
   
-  @org.springframework.web.bind.annotation.RequestMapping(value = "/listar/tudo", method = org.springframework.web.bind.annotation.RequestMethod.GET, produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
-  public @org.springframework.web.bind.annotation.ResponseBody String listarTudo() {
+  @org.springframework.web.bind.annotation.RequestMapping(value = "/listar/todos", method = org.springframework.web.bind.annotation.RequestMethod.GET, produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+  public @org.springframework.web.bind.annotation.ResponseBody String listarTodos() {
     return gamora.utils.GSonUtils.getInstance().obj2Json(this.service.listarTodos());
   }
   
